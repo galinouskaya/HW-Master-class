@@ -1,0 +1,73 @@
+---Создаем схему:
+ CREATE SCHEMA HomeWork
+
+---Создание таблиц:
+
+create table IF NOT exists HomeWork.title(
+t_id SERIAL primary key,
+t_name varchar(50) not null)
+------------------------------------------------
+
+create table IF NOT exists HomeWork.employee(
+e_id SERIAL primary key,
+f_name varchar(50) not null,
+l_name varchar(50) not null,
+title int,
+date_of_birth date not null,
+foreign key (title) references HomeWork.title (t_id))
+
+--------------------------------------------------
+
+create table  customers(
+cust_id SERIAL primary key,
+f_name varchar(50) not null,
+l_name varchar(50) not null,
+phone_number varchar (20) not null, 
+email varchar (20)  null);
+
+-----------------------------
+
+create table IF NOT exists product(
+prod_id SERIAL primary key,
+prod_name varchar(50) not null unique,
+price money not null CONSTRAINT positive_price CHECK (price > 0));
+
+-----------------------------------
+
+create table  delivery_address(
+address_id SERIAL,
+cust_id int references customers(cust_id),
+street varchar(50) not null,
+building varchar(50) not null,
+apartment int not null, 
+primary key(address_id, cust_id));
+
+-------------------------------------
+
+create table payment (
+pay_id SERIAL primary key,
+pay_name varchar(50) not null unique);
+
+--------------------------------------
+   
+create table IF NOT exists orders(
+order_id SERIAL primary key,
+cust_id int not null references customers(cust_id),
+date_get timestamp not null,
+pay_id int not null references payment (pay_id));
+
+------------------------------------------------------------------------
+
+create table  order_product(
+order_id int references orders(order_id),
+prod_id int references product(prod_id),
+quantity int not null,
+primary key(order_id, prod_id));
+
+--------------------------------
+
+create table  delivery (
+del_id SERIAL primary key,
+order_id int not null references orders (order_id),
+e_id int not null references employee (e_id),
+date_arrived timestamp not null);
